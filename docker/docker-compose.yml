@@ -18,9 +18,6 @@ services:
     depends_on:
       - zookeeper
     ports:
-      # Exposes 9092 for external connections to the broker
-      # Use kafka:29092 for connections internal on the docker network
-      # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
       - "9092:9092"
     environment:
       TZ: ${TZ_SET}
@@ -35,7 +32,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
       CONFLUENT_METRICS_ENABLE: 'false'
-
 
   schema-registry:
     image: "confluentinc/cp-schema-registry:${CONF_VER}"
