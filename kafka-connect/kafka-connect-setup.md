@@ -1,7 +1,6 @@
-1. **run workers:**
+1. **run connect worker:**
 ```shell
-connect-distributed kafka-connect/worker1.properties
-connect-distributed kafka-connect/worker2.properties
+connect-distributed kafka-connect/worker.properties
 ```
 
 2. **create a FileStream Source Connector reading from `/tmp/github-accounts.txt`:**
