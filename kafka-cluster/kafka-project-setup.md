@@ -12,7 +12,7 @@ kafka-server-start kafka-cluster/server3.properties
 
 **or only one broker:**
 ```shell
-kafka-server-start kafka-cluster/server1.properties
+kafka-server-start kafka-cluster/server.properties
 ```
 
 3. **create topics:**
