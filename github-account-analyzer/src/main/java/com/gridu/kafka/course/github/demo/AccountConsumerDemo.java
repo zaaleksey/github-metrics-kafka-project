@@ -11,8 +11,8 @@ public class AccountConsumerDemo {
     public static void main(String[] args) {
         String topic = "github-accounts";
         AccountsConsumer accountsConsumer = new AccountsConsumer(
-                "localhost:9092,localhost:9093,localhost:9094", "github-accounts-analyzer")
-                .subscribe(topic);
+                "localhost:9092,localhost:9093,localhost:9094", "github-accounts-analyzer");
+        accountsConsumer.subscribe(topic);
 
         try {
             while (true) {

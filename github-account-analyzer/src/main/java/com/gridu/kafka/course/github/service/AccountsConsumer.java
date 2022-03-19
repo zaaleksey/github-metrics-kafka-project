@@ -19,9 +19,8 @@ import java.util.stream.StreamSupport;
 public class AccountsConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountsConsumer.class);
+    private final KafkaConsumer<String, String> consumer;
     private final ObjectMapper mapper;
-
-    private KafkaConsumer<String, String> consumer;
 
     public AccountsConsumer(String bootstrapServers, String groupId) {
         Properties properties = new Properties();
@@ -35,9 +34,8 @@ public class AccountsConsumer {
         mapper = new ObjectMapper();
     }
 
-    public AccountsConsumer subscribe(String topic) {
+    public void subscribe(String topic) {
         consumer.subscribe(Collections.singleton(topic));
-        return this;
     }
 
     public void close() {
@@ -52,7 +50,6 @@ public class AccountsConsumer {
                 .map(this::jsonStringToAccount);
     }
 
-
     /**
      * Convert json string in Account object with objectMapper.
      *
@@ -63,7 +60,7 @@ public class AccountsConsumer {
         try {
             return mapper.readValue(json, Account.class);
         } catch (Exception e) {
-            logger.info("Cannot read the value - data may be malformed", e);
+            logger.warn("Cannot read the value - data may be malformed", e);
         }
         return new Account();
     }

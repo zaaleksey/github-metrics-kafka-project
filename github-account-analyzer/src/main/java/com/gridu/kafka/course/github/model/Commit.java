@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /** The representation of commit record. */
 @Getter
@@ -17,7 +17,7 @@ public class Commit {
     /** GitHub login of the author of the commit. */
     private String author;
     /** Date and time when the commit was created. */
-    private LocalDateTime dateTime;
+    private Date date;
     /** Hash of the commit. */
     private String sha;
     /** Programming language of the commit. */
@@ -32,18 +32,8 @@ public class Commit {
         return this;
     }
 
-    public Commit setRepository(String repository) {
-        this.repository = repository;
-        return this;
-    }
-
-    public Commit setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public Commit setLanguage(String language) {
-        this.language = language;
+    public Commit setDateTime(Date date) {
+        this.date = date;
         return this;
     }
 
@@ -52,8 +42,18 @@ public class Commit {
         return this;
     }
 
-    public Commit setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public Commit setLanguage(String language) {
+        this.language = language;
+        return this;
+    }
+
+    public Commit setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public Commit setRepository(String repository) {
+        this.repository = repository;
         return this;
     }
 
