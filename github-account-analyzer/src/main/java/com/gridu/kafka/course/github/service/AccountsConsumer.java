@@ -15,13 +15,24 @@ import java.util.Properties;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/** Consumes GitHub accounts from github-accounts topic. */
+/**
+ * Wrapper around KafkaConsumer.
+ * Consumes GitHub accounts from github-accounts topic.
+ */
 public class AccountsConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountsConsumer.class);
-    private final KafkaConsumer<String, String> consumer;
+
     private final ObjectMapper mapper;
 
+    private KafkaConsumer<String, String> consumer;
+
+    /**
+     * Constructs AccountsConsumer with the provided parameters.
+     *
+     * @param bootstrapServers kafka consumer's bootstrap server
+     * @param groupId kafka consumer's group id
+     */
     public AccountsConsumer(String bootstrapServers, String groupId) {
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -30,8 +41,8 @@ public class AccountsConsumer {
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        consumer = new KafkaConsumer<>(properties);
         mapper = new ObjectMapper();
+        consumer = new KafkaConsumer<>(properties);
     }
 
     public void subscribe(String topic) {
@@ -43,6 +54,13 @@ public class AccountsConsumer {
         consumer.close();
     }
 
+    /**
+     * Proxies 'poll' call to the kafka consumer and maps received records to Account class.
+     * {@link Account}
+     *
+     * @param timeout duration of poll
+     * @return stream of accounts
+     */
     public Stream<Account> poll(Duration timeout) {
         Iterable<ConsumerRecord<String, String>> recordIterable = () -> consumer.poll(timeout).iterator();
         return StreamSupport.stream(recordIterable.spliterator(), false)
@@ -58,9 +76,11 @@ public class AccountsConsumer {
      */
     private Account jsonStringToAccount(String json) {
         try {
-            return mapper.readValue(json, Account.class);
+            Account account = mapper.readValue(json, Account.class);
+            logger.info("New record: " + account);
+            return account;
         } catch (Exception e) {
-            logger.warn("Cannot read the value - data may be malformed", e);
+            logger.warn("Can't read the value - data may be malformed", e);
         }
         return new Account();
     }

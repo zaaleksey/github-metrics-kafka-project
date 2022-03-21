@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /** The representation of commit record. */
 @Getter
@@ -17,7 +17,7 @@ public class Commit {
     /** GitHub login of the author of the commit. */
     private String author;
     /** Date and time when the commit was created. */
-    private Date date;
+    private LocalDateTime localDateTime;
     /** Hash of the commit. */
     private String sha;
     /** Programming language of the commit. */
@@ -32,8 +32,8 @@ public class Commit {
         return this;
     }
 
-    public Commit setDateTime(Date date) {
-        this.date = date;
+    public Commit setDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
         return this;
     }
 

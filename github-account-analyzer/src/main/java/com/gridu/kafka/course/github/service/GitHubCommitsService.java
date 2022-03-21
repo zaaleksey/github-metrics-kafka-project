@@ -1,4 +1,4 @@
-package com.gridu.kafka.course.github.api;
+package com.gridu.kafka.course.github.service;
 
 import com.gridu.kafka.course.github.model.Commit;
 import lombok.SneakyThrows;
@@ -10,16 +10,20 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/** Wrapper for GitHub API. */
 public class GitHubCommitsService {
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubCommitsService.class);
 
     private GitHub gitHub;
 
+    /** Constructs the service. The access token must be contained in properties file ~/.github. */
     public GitHubCommitsService() {
         try {
             gitHub = GitHubBuilder.fromPropertyFile().build();
@@ -28,6 +32,26 @@ public class GitHubCommitsService {
         }
     }
 
+    /**
+     * Constructs the service. Gets an access token from the specified file.
+     *
+     * @param filePath path to file with access token
+     */
+    public GitHubCommitsService(String filePath) {
+        try {
+            gitHub = GitHubBuilder.fromPropertyFile(filePath).build();
+        } catch (IOException e) {
+            logger.warn("Can't create github API client... Invalid properties file path", e);
+        }
+    }
+
+    /**
+     * Polls the commits made by the 'author' starting from 'startingDateTime'
+     *
+     * @param author author the commits
+     * @param startingDateTime starting creation date of the commits
+     * @return stream of commits
+     */
     public Stream<Commit> poll(String author, LocalDateTime startingDateTime) {
         String startingDateTimeStr = String.format(">%s",
                 startingDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
@@ -47,11 +71,15 @@ public class GitHubCommitsService {
     private Commit convertGHCommitToCommitModel (GHCommit ghCommit) {
         return new Commit()
                 .setAuthor(ghCommit.getAuthor().getLogin())
-                .setDateTime(ghCommit.getCommitDate())
+                .setDateTime(fromDateToLocalDateTime(ghCommit.getCommitDate()))
                 .setSha(ghCommit.getSHA1())
                 .setLanguage(ghCommit.getOwner().getLanguage())
                 .setMessage(ghCommit.getCommitShortInfo().getMessage())
                 .setRepository(ghCommit.getOwner().getName());
+    }
+
+    private LocalDateTime fromDateToLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
 }
