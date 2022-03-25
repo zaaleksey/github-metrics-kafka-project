@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class Account {
 
-    /** GitHub account login. */
-    private String account;
-    /** Can be hours, days or weeks, and should have a format like "1d", "2w", "3h". */
-    private String interval;
+  /** GitHub account login. */
+  private String account;
+  /** Can be hours, days or weeks, and should have a format like "1d", "2w", "3h". */
+  private String interval;
 
 }
 
