@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class Commit {
-
   /** GitHub login of the author of the commit. */
   private String author;
   /** Date and time when the commit was created. */

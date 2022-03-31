@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterators;
 import java.util.stream.Stream;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -56,9 +55,9 @@ class AccountsConsumerTest {
 
   @Test
   void poll() throws JsonProcessingException {
-    Account account = new Account();
-    account.setAccount("author");
-    account.setInterval("1d");
+    Account account = new Account()
+        .setAccount("author")
+        .setInterval("1d");
 
     String accountJson = mapper.writeValueAsString(account);
     ConsumerRecords<String, String> consumerRecords = getConsumerRecordsMock(accountJson);
@@ -75,10 +74,9 @@ class AccountsConsumerTest {
   void pollIncorrectAccount() {
     ConsumerRecords<String, String> consumerRecords = getConsumerRecordsMock("");
 
-    when(kafkaConsumer.poll(any())).thenReturn(consumerRecords);
+    lenient().when(kafkaConsumer.poll(any())).thenReturn(consumerRecords);
 
     assertEquals(accountsConsumerUnderTest.poll(Duration.ofMillis(1000)).count(), 0);
-
   }
 
   private ConsumerRecords<String, String> getConsumerRecordsMock(String accountJson) {
@@ -88,8 +86,7 @@ class AccountsConsumerTest {
     List<ConsumerRecord<String, String>> records = Collections.singletonList(record);
 
     when(recordsMock.iterator()).thenReturn(records.iterator());
-    lenient().when(recordsMock.spliterator())
-        .thenReturn(Spliterators.spliteratorUnknownSize(records.iterator(), 0));
+    lenient().when(recordsMock.spliterator()).thenReturn(records.spliterator());
 
     return recordsMock;
   }

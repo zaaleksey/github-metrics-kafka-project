@@ -1,13 +1,6 @@
 package com.gridu.kafka.course.github.service;
 
 import com.gridu.kafka.course.github.model.Commit;
-import lombok.SneakyThrows;
-import org.kohsuke.github.GHCommit;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -15,11 +8,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.kohsuke.github.GHCommit;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 
 /** Wrapper for GitHub API. */
+@Slf4j
 public class GitHubCommitsService {
-
-  private static final Logger logger = LoggerFactory.getLogger(GitHubCommitsService.class);
 
   GitHub gitHub;
 
@@ -28,7 +25,7 @@ public class GitHubCommitsService {
     try {
       gitHub = GitHubBuilder.fromPropertyFile().build();
     } catch (IOException e) {
-      logger.warn("Can't create github API client... Check existence of properties file ~/.github", e);
+      log.warn("Can't create github API client... Check existence of properties file ~/.github", e);
     }
   }
 
@@ -43,7 +40,7 @@ public class GitHubCommitsService {
     String startingDateTimeStr = String.format(">%s",
         startingDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
 
-    logger.info("Polling commits for " + author + ". Starting date: " + startingDateTimeStr);
+    log.info("Polling commits for " + author + ". Starting date: " + startingDateTimeStr);
 
     Iterable<GHCommit> ghCommitsIterable = gitHub.searchCommits()
         .author(author)

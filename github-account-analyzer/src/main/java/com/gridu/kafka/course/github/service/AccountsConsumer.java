@@ -9,23 +9,20 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper around KafkaConsumer.
  * Consumes GitHub accounts from github-accounts topic.
  */
+@Slf4j
 public class AccountsConsumer {
 
-  private static final Logger logger = LoggerFactory.getLogger(AccountsConsumer.class);
-
   private final ObjectMapper mapper;
-
   KafkaConsumer<String, String> consumer;
 
   /**
@@ -53,7 +50,7 @@ public class AccountsConsumer {
   }
 
   public void close() {
-    logger.info("Accounts consumer shutting down...");
+    log.info("Accounts consumer shutting down...");
     consumer.close();
   }
 
@@ -65,8 +62,9 @@ public class AccountsConsumer {
    * @return stream of accounts
    */
   public Stream<Account> poll(Duration timeout) {
-    Iterable<ConsumerRecord<String, String>> recordIterable = () -> consumer.poll(timeout)
-        .iterator();
+    Iterable<ConsumerRecord<String, String>> recordIterable = () ->
+        consumer.poll(timeout).iterator();
+
     return StreamSupport.stream(recordIterable.spliterator(), false)
         .map(ConsumerRecord::value)
         .map(this::jsonStringToAccount)
@@ -79,13 +77,13 @@ public class AccountsConsumer {
    * @param json a json string describing the account
    * @return account object
    */
-  private Account jsonStringToAccount(String json) {
+  public Account jsonStringToAccount(String json) {
     Account account = null;
     try {
       account = mapper.readValue(json, Account.class);
-      logger.info("New record: " + account);
+      log.info("New record: " + account);
     } catch (JsonProcessingException e) {
-      logger.warn("Can't read the value - data may be malformed", e);
+      log.warn("Can't read the value - data may be malformed", e);
     }
     return account;
   }

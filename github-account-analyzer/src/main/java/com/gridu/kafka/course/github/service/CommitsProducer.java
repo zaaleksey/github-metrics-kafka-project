@@ -6,25 +6,21 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gridu.kafka.course.github.model.Commit;
 import java.util.Properties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper around KafkaProducer.
  * Produces GitHub commits objects.
  */
+@Slf4j
 public class CommitsProducer {
 
-  private static final Logger logger = LoggerFactory.getLogger(CommitsProducer.class);
-
   private final String topic;
-
   private final ObjectMapper mapper;
-
   KafkaProducer<String, String> producer;
 
   public CommitsProducer(String bootstrapServer, String topic) {
@@ -55,13 +51,13 @@ public class CommitsProducer {
    * @param commit commit ti send to kafka
    */
   public void send(Commit commit) {
-    logger.info("Pushing commit into kafka: " + commit);
+    log.info("Pushing commit into kafka: " + commit);
 
     String commitJson = null;
     try {
       commitJson = mapper.writeValueAsString(commit);
     } catch (JsonProcessingException e) {
-      logger.warn("Can't write commit as json string", e);
+      log.warn("Can't write commit as json string", e);
     }
 
     if (commitJson != null) {
