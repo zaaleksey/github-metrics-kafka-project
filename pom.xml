@@ -19,7 +19,7 @@
     </properties>
 
     <dependencies>
-        <!-- Kafka -->
+        <!-- Kafka client -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
@@ -80,7 +80,6 @@
             <version>4.3.1</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
