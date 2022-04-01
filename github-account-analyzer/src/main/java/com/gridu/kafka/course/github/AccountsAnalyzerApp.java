@@ -17,17 +17,19 @@ public class AccountsAnalyzerApp {
   private static final String OUTPUT_TOPIC = "github-commits";
   private static final String GROUP_ID = "github-accounts-analyzer";
   private static boolean shutdownFlag = false;
-  private AccountsConsumer accountsConsumer;
-  private IntervalDeserializer intervalDeserializer;
-  private GitHubCommitsService commitsService;
-  private CommitsProducer commitsProducer;
+  private final AccountsConsumer accountsConsumer;
+  private final IntervalDeserializer intervalDeserializer;
+  private final GitHubCommitsService commitsService;
+  private final CommitsProducer commitsProducer;
 
   public AccountsAnalyzerApp(String bootstrapServer) {
     accountsConsumer = new AccountsConsumer(bootstrapServer, GROUP_ID);
     accountsConsumer.subscribe(INPUT_TOPIC);
-    intervalDeserializer = new IntervalDeserializer();
+
     commitsService = new GitHubCommitsService();
     commitsProducer = new CommitsProducer(bootstrapServer, OUTPUT_TOPIC);
+
+    intervalDeserializer = new IntervalDeserializer();
 
     addShutdownHook();
   }
