@@ -8,6 +8,7 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
+import org.apache.kafka.streams.state.ValueAndTimestamp;
 
 /**
  * Calculates top five committers.
@@ -18,7 +19,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 public class TopFiveCommittersTransformer implements Transformer<String, Long, KeyValue<String, String>> {
 
   private final String storeName;
-  private KeyValueStore<String, Long> store;
+  private KeyValueStore<String, ValueAndTimestamp> store;
 
   public TopFiveCommittersTransformer(String storeName) {
     this.storeName = storeName;
@@ -31,18 +32,20 @@ public class TopFiveCommittersTransformer implements Transformer<String, Long, K
 
   @Override
   public KeyValue<String, String> transform(String key, Long value) {
-    List<KeyValue<String, Long>> authors = new ArrayList<>();
+    List<KeyValue<String, ValueAndTimestamp>> authors = new ArrayList<>();
     store.all().forEachRemaining(authors::add);
 
-    authors.sort(Comparator.comparing(o -> (((KeyValue<String, Long>) o).value)).reversed());
+    authors.sort(Comparator.comparing(o ->
+        ((KeyValue<String, ValueAndTimestamp<Long>>) o).value.value()).reversed());
 
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < 5 && i < authors.size(); i++) {
       String author = authors.get(i).key;
-      Long number_of_commits = authors.get(i).value;
+      var number_of_commits = authors.get(i).value.value();
       sb.append(author)
-          .append(" - ")
-          .append(number_of_commits);
+          .append(" (")
+          .append(number_of_commits)
+          .append(")");
 
       if (i != 4 && i != authors.size() - 1) {
         sb.append(", ");

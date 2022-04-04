@@ -19,41 +19,51 @@ public class CommitsMetricsApp {
   private static final String TOTAL_COMMITTERS_TOPIC = "github-metrics-total-committers";
   private static final String TOP_COMMITTERS_TOPIC = "github-metrics-top-committers";
   private static final String LANGUAGES_TOPIC = "github-metrics-languages";
+  private final String bootstrapServer;
   private final List<MetricsStream> metricsStreams;
-  private final Properties properties;
 
   public CommitsMetricsApp(String bootstrapServer) {
+    this.bootstrapServer = bootstrapServer;
+
     metricsStreams = new ArrayList<>();
-    properties = new Properties();
-    properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-    properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-    properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-    properties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
   }
 
   public void run() {
-    MetricsStream totalCommitsStream = new CommitsCounterMetrics(properties, INPUT_TOPIC, TOTAL_COMMITS_TOPIC);
+    MetricsStream totalCommitsStream = new CommitsCounterMetrics(getAppProperties(bootstrapServer),
+        INPUT_TOPIC, TOTAL_COMMITS_TOPIC);
     totalCommitsStream.start();
     log.info("Total commits counter stream is launched");
     metricsStreams.add(totalCommitsStream);
 
-    MetricsStream totalCommittersStream = new CommittersCounterMetrics(properties, INPUT_TOPIC, TOTAL_COMMITTERS_TOPIC);
+    MetricsStream totalCommittersStream = new CommittersCounterMetrics(getAppProperties(bootstrapServer),
+        INPUT_TOPIC, TOTAL_COMMITTERS_TOPIC);
     totalCommittersStream.start();
     log.info("Total committers counter stream is launched");
     metricsStreams.add(totalCommittersStream);
 
-    MetricsStream topCommittersStream = new TopFiveCommittersMetrics(properties, INPUT_TOPIC, TOP_COMMITTERS_TOPIC);
+    MetricsStream topCommittersStream = new TopFiveCommittersMetrics(getAppProperties(bootstrapServer),
+        INPUT_TOPIC, TOP_COMMITTERS_TOPIC);
     topCommittersStream.start();
     log.info("Top five committers counter stream is launched");
     metricsStreams.add(topCommittersStream);
 
-    MetricsStream languagesStream = new LanguagesCounterMetrics(properties, INPUT_TOPIC, LANGUAGES_TOPIC);
+    MetricsStream languagesStream = new LanguagesCounterMetrics(getAppProperties(bootstrapServer),
+        INPUT_TOPIC, LANGUAGES_TOPIC);
     languagesStream.start();
     log.info("Languages counter stream is launched");
     metricsStreams.add(languagesStream);
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> metricsStreams.forEach(MetricsStream::close)));
+  }
+
+  private Properties getAppProperties(String bootstrapServer) {
+    Properties properties = new Properties();
+    properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+    properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+    properties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+    return properties;
   }
 
   public static void main(String[] args) {

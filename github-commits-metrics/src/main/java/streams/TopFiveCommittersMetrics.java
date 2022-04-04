@@ -7,6 +7,7 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
@@ -18,12 +19,12 @@ import utils.CommitHelper;
 /**
  * Calculates top five of committers by the amount of distinct commits each one has.
  * Produces string value with the top five committers,
- * e.g. "top5_committers: author_top_1 - 10, author_top_2 - 5".
+ * e.g. "top5_committers: author_top_1 (10), author_top_2 (5)".
  */
 public class TopFiveCommittersMetrics extends MetricsStream {
 
   private static final String DEDUPLICATE_COMMITS_STORE = "top-five-committers-counter";
-  private static final String COMMITS_BY_AUTHOR_STORE = "commits-by-author";
+  private static final String COMMITS_BY_AUTHOR_STORE = "CommitsByAuthor";
 
   public TopFiveCommittersMetrics(Properties properties, String inputTopic, String outputTopic) {
     super(properties, inputTopic, outputTopic);
@@ -44,7 +45,7 @@ public class TopFiveCommittersMetrics extends MetricsStream {
         .transform(() -> new DeduplicateByKeyTransformer(DEDUPLICATE_COMMITS_STORE), DEDUPLICATE_COMMITS_STORE)
         .selectKey(CommitHelper::getAuthorOfCommit)
         .groupByKey()
-        .count()
+        .count(Materialized.as(COMMITS_BY_AUTHOR_STORE))
         .toStream()
         .transform(() -> new TopFiveCommittersTransformer(COMMITS_BY_AUTHOR_STORE), COMMITS_BY_AUTHOR_STORE);
 

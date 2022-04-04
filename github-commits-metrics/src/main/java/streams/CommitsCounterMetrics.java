@@ -7,6 +7,7 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
@@ -40,7 +41,7 @@ public class CommitsCounterMetrics extends MetricsStream {
         .transform(() -> new DeduplicateByKeyTransformer(DEDUPLICATE_COMMITS_STORE), DEDUPLICATE_COMMITS_STORE)
         .selectKey((key, value) -> "total-commits-number")
         .groupByKey()
-        .count()
+        .count(Materialized.as("CommitsCount"))
         .mapValues(value -> "total_commits: " + value);
 
     totalCommitsNumber.toStream().to(outputTopic, Produced.with(Serdes.String(), Serdes.String()));
