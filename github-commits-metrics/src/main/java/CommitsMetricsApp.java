@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
@@ -11,7 +10,6 @@ import streams.LanguagesCounterMetrics;
 import streams.MetricsStream;
 import streams.TopFiveCommittersMetrics;
 
-@Slf4j
 public class CommitsMetricsApp {
 
   private static final String INPUT_TOPIC = "github-commits";
@@ -32,25 +30,21 @@ public class CommitsMetricsApp {
     MetricsStream totalCommitsStream = new CommitsCounterMetrics(getAppProperties(bootstrapServer),
         INPUT_TOPIC, TOTAL_COMMITS_TOPIC);
     totalCommitsStream.start();
-    log.info("Total commits counter stream is launched");
     metricsStreams.add(totalCommitsStream);
 
     MetricsStream totalCommittersStream = new CommittersCounterMetrics(getAppProperties(bootstrapServer),
         INPUT_TOPIC, TOTAL_COMMITTERS_TOPIC);
     totalCommittersStream.start();
-    log.info("Total committers counter stream is launched");
     metricsStreams.add(totalCommittersStream);
 
     MetricsStream topCommittersStream = new TopFiveCommittersMetrics(getAppProperties(bootstrapServer),
         INPUT_TOPIC, TOP_COMMITTERS_TOPIC);
     topCommittersStream.start();
-    log.info("Top five committers counter stream is launched");
     metricsStreams.add(topCommittersStream);
 
     MetricsStream languagesStream = new LanguagesCounterMetrics(getAppProperties(bootstrapServer),
         INPUT_TOPIC, LANGUAGES_TOPIC);
     languagesStream.start();
-    log.info("Languages counter stream is launched");
     metricsStreams.add(languagesStream);
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> metricsStreams.forEach(MetricsStream::close)));
@@ -63,6 +57,7 @@ public class CommitsMetricsApp {
     properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
     properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
     properties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+    properties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
     return properties;
   }
 

@@ -35,8 +35,6 @@ public class DeduplicateByKeyTransformer implements Transformer<String, String, 
   }
 
   @Override
-  public void close() {
-    store.close();
-  }
+  public void close() {}
 
 }

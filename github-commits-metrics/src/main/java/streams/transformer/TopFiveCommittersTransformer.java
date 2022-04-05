@@ -57,8 +57,6 @@ public class TopFiveCommittersTransformer implements Transformer<String, Long, K
   }
 
   @Override
-  public void close() {
-    store.close();
-  }
+  public void close() {}
 
 }

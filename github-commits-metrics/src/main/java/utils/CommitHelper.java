@@ -2,6 +2,7 @@ package utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gridu.kafka.course.github.model.Commit;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ public class CommitHelper {
 
   static {
     mapper.registerModule(new JavaTimeModule());
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
   }
 
   public static String getAuthorOfCommit(String key, String value) {

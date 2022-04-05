@@ -32,9 +32,9 @@ public class CommittersCounterMetrics extends MetricsStream {
   protected Topology createTopology() {
     StreamsBuilder streamsBuilder = new StreamsBuilder();
 
-    StoreBuilder<KeyValueStore<String, String>> keyValueStoreBuilder =
-        Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(DEDUPLICATE_COMMITS_STORE),
-            Serdes.String(), Serdes.String());
+    StoreBuilder<KeyValueStore<String, String>> keyValueStoreBuilder = Stores.keyValueStoreBuilder(
+        Stores.persistentKeyValueStore(DEDUPLICATE_COMMITS_STORE),
+        Serdes.String(), Serdes.String());
     streamsBuilder.addStateStore(keyValueStoreBuilder);
 
     KTable<String, String> committersCount = streamsBuilder

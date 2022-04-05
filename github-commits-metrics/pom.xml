@@ -23,12 +23,22 @@
             <artifactId>kafka-streams</artifactId>
             <version>3.1.0</version>
         </dependency>
-      <dependency>
-        <groupId>org.example</groupId>
-        <artifactId>github-account-analyzer</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <scope>compile</scope>
-      </dependency>
+
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>github-account-analyzer</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams-test-utils</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -26,10 +26,10 @@ Steps of the project
 
 - [X] Install Kafka ou your local machine (using brew, docker, or manual install). 
 - [X] Implement GitHub client using GitHub API (Java API, Python API) or using GitHub rest API, if you want, also Kafka connect can be used here.
-- [ ] Create a Kafka topic for GitHub API messages. (Replication factor should be 2 or more, test different partition count, test different key distribution).
+- [X] Create a Kafka topic for GitHub API messages. (Replication factor should be 2 or more, test different partition count, test different key distribution).
 - [X] Create a Kafka topic for GitHub accounts. 
 - [X] Implement Kafka Producer using Java or Python API. (Test a few acknowledge modes, using multi-broker Kafka configuration).
-- [ ] Implement Kafka messages analyzer, using Kafka Streams and Kafka consumer API or KSQL.
+- [X] Implement Kafka messages analyzer, using Kafka Streams and Kafka consumer API or KSQL.
 
 ---
 

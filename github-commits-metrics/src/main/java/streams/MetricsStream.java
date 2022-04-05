@@ -7,7 +7,7 @@ import org.apache.kafka.streams.Topology;
 /** Simple wrapper for {@link KafkaStreams}. */
 public abstract class MetricsStream {
 
-  private KafkaStreams kafkaStreams;
+  protected KafkaStreams kafkaStreams;
   protected Properties properties;
   protected String inputTopic;
   protected String outputTopic;
