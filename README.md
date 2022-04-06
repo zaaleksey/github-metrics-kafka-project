@@ -1,4 +1,4 @@
-## GridU Apache Kafka Course
+## Apache Kafka Course
 
 ---
 
@@ -18,18 +18,6 @@ Information about commits should be put to another topic in Kafka (1 commit - 1 
 In this part, students need to read data from the commit topic, calculate metrics and write these metrics into the file. 
 Exactly once semantics (Kafka Streams or KSQL can help) should be achieved. 
 The format of the destination file can be CSV or JSON and can be stored in the local filesystem. 
-
----
-
-Steps of the project
----
-
-- [X] Install Kafka ou your local machine (using brew, docker, or manual install). 
-- [X] Implement GitHub client using GitHub API (Java API, Python API) or using GitHub rest API, if you want, also Kafka connect can be used here.
-- [X] Create a Kafka topic for GitHub API messages. (Replication factor should be 2 or more, test different partition count, test different key distribution).
-- [X] Create a Kafka topic for GitHub accounts. 
-- [X] Implement Kafka Producer using Java or Python API. (Test a few acknowledge modes, using multi-broker Kafka configuration).
-- [X] Implement Kafka messages analyzer, using Kafka Streams and Kafka consumer API or KSQL.
 
 ---
 
